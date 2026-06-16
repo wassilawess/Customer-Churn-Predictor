@@ -9,14 +9,14 @@ import os
 
 # load model & scaler
 
-BASE_DIR = os.path.dirname(os.getcwd()) # goes up from notebooks folder
-
-model_path = os.path.join(BASE_DIR, "models/churn_model.pkl")
-scaler_path = os.path.join(BASE_DIR, "models/scaler.pkl")
+BASE_DIR = os.path.dirname(os.path.dirname(__file__))  # goes to project root
+model_path = os.path.join(BASE_DIR, "models","churn_model.pkl")
+scaler_path = os.path.join(BASE_DIR, "models","scaler.pkl")
+model_columns_path = os.path.join(BASE_DIR, "models","model_columns.pkl")
 
 model = joblib.load(model_path)
 scaler = joblib.load(scaler_path)
-
+model_columns = joblib.load(model_columns_path)
 
 # title
 st.title("Customer Churn Predictor")
