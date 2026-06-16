@@ -1,14 +1,22 @@
 # imports
+import sklearn
+import xgboost
+import joblib
 import streamlit as st
 import pandas as pd
-import joblib
 import numpy as np
+import os
 
 # load model & scaler
 
-model = joblib.load("models/churn_model.pkl")
-scaler = joblib.load("models/scaler.pkl")
-model_columns = joblib.load("models/model_columns.pkl")
+BASE_DIR = os.path.dirname(os.getcwd()) # goes up from notebooks folder
+
+model_path = os.path.join(BASE_DIR, "models/churn_model.pkl")
+scaler_path = os.path.join(BASE_DIR, "models/scaler.pkl")
+
+model = joblib.load(model_path)
+scaler = joblib.load(scaler_path)
+
 
 # title
 st.title("Customer Churn Predictor")

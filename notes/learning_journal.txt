@@ -1,0 +1,320 @@
+1. Project Initialization
+
+Selected the Telco Customer Churn dataset, which contains customer behavior, subscription details, and service usage.
+
+Problem Definition:
+Type: Binary Classification
+Target: Churn (Yes / No)
+Goal: Predict whether a customer will leave the service
+Key learning:
+
+Choosing the correct problem type early is essential because it determines:
+
+model selection
+evaluation metrics
+preprocessing strategy
+2. Dataset Understanding
+Structure:
+7043 rows
+21 columns
+Mix of:
+Numerical features (tenure, charges)
+Categorical features (services, contract type, payment method)
+Key insight:
+
+Most features are categorical → requires encoding before ML models
+
+3. Target Variable Analysis
+
+Used:
+
+value_counts()
+value_counts(normalize=True)
+sns.countplot(x="Churn")
+What sns means:
+
+sns = Seaborn library, used for statistical visualization in Python.
+
+Observations:
+No churn ≈ 73%
+Churn ≈ 27%
+Key concept: class imbalance
+
+This means:
+
+accuracy alone is misleading
+model must be evaluated using:
+F1-score
+ROC-AUC
+Precision/Recall
+4. Missing Values & Data Cleaning
+
+Checked:
+
+df.isnull().sum()
+df.isnull().sum() / len(df) * 100
+Meaning of this formula:
+
+This calculates percentage of missing values per column:
+
+\text{Missing %} = \frac{\text{missing values}}{\text{total rows}} \times 100
+Key insight:
+No visible missing values initially
+BUT after conversion → hidden missing values appeared
+5. Data Type Issue (Important Real-World Problem)
+Problem:
+
+TotalCharges was stored as string (object)
+
+After conversion:
+
+pd.to_numeric(df["TotalCharges"], errors="coerce")
+What errors="coerce" means:
+invalid values → converted to NaN instead of crashing
+Key learning:
+
+Bad data types can hide missing values → always recheck after conversion.
+
+6. Exploratory Data Analysis (EDA)
+Visualizations used:
+countplot (Churn distribution)
+countplot(x="InternetService", hue="Churn")
+boxplots (charges vs churn)
+correlation-style comparisons
+
+ What is hue in Seaborn?
+sns.countplot(x="InternetService", hue="Churn")
+Meaning:
+x → main category (InternetService)
+hue → splits each category into subgroups (Churn Yes/No)
+Interpretation:
+
+It allows comparison like:
+
+“Within each internet service type, how many churned vs stayed?”
+
+7. Correlation Understanding (Important)
+What correlation means:
+
+Correlation shows relationship strength between numeric variables
+
++1 → strong positive relationship
+0 → no relationship
+-1 → strong negative relationship
+In this project:
+
+We noticed:
+
+tenure ↑ → churn ↓
+monthly charges ↑ → churn ↑
+Key insight:
+
+Correlation helps identify potential predictors, not causation.
+
+8. Feature Understanding
+
+Grouped features:
+
+Customer profile:
+gender, senior citizen, partner
+Services:
+internet, phone, streaming, security
+Account info:
+contract type, payment method
+Usage:
+tenure, charges
+Key insight:
+
+Business factors matter more than demographics.
+
+9. Encoding (Feature Transformation)
+
+Used:
+
+pd.get_dummies(drop_first=True)
+Why encoding is needed:
+
+ML models cannot understand text → must convert to numbers.
+
+Why drop_first=True:
+
+Prevents duplicate information (multicollinearity).
+
+10. Train-Test Split
+
+Used:
+
+train_test_split(X, y, stratify=y)
+What stratify=y means:
+
+Ensures:
+
+same churn ratio in train and test sets
+Why it matters:
+
+Prevents biased training or misleading evaluation.
+
+11. Feature Scaling
+
+Used:
+
+StandardScaler()
+What scaling does:
+
+Transforms data so:
+
+mean = 0
+standard deviation = 1
+Why it matters:
+KNN depends on distance → scaling is critical
+Logistic Regression also benefits from scaling
+12. Models Trained
+
+implemented:
+
+Logistic Regression
+KNN
+Decision Tree
+Random Forest
+Gradient Boosting
+Key learning:
+
+Different models behave differently:
+
+Model	Behavior
+Logistic Regression	linear relationships
+KNN	distance-based
+Decision Tree	rule-based
+Random Forest	ensemble trees
+Gradient Boosting	sequential learning
+13. Model Evaluation Metrics
+
+Used:
+
+Accuracy
+Precision
+Recall
+F1-score
+ROC-AUC
+
+ ROC-AUC Explained
+
+predict_proba(X_test_scaled)[:, 1]
+Meaning:
+predict_proba() returns probabilities:
+column 0 → No churn
+column 1 → Churn probability
+[:,1] → probability of positive class (churn)
+ROC Curve Concepts:
+TPR (True Positive Rate) = Recall
+FPR (False Positive Rate) = False alarms
+What ROC curve shows:
+
+Trade-off between:
+
+detecting churn correctly
+avoiding false churn predictions
+AUC:
+
+Area Under Curve:
+
+0.5 → random model
+1.0 → perfect model
+14. Model Comparison Results
+Model	Performance Insight
+Logistic Regression	best balanced performance
+Decision Tree	overfitting risk
+Random Forest	strong but slightly lower recall
+Gradient Boosting	stable but slower
+KNN	weakest performance
+Key insight:
+
+Best model is not always the most complex one.
+
+15. Coefficients Interpretation (Logistic Regression)
+
+Used:
+
+coef_df
+Meaning:
+
+Each coefficient shows:
+
+positive → increases churn probability
+negative → decreases churn probability
+Key drivers:
+Fiber optic → increases churn
+High charges → increases churn
+Long tenure → decreases churn
+
+Final pipeline:
+
+EDA → Cleaning → Feature Engineering → Encoding → Train/Test Split → Scaling → Modeling → Evaluation → Interpretation → Saving Model
+
+ Final Learning Outcome
+
+full ML pipeline architecture
+preprocessing vs modeling separation
+evaluation beyond accuracy
+model interpretability
+debugging real ML issues
+importance of reproducible pipelines
+business interpretation of churn drivers
+
+setup.py vs app.py
+app.py
+
+Contains the actual application code executed by users.
+
+Examples:
+
+Streamlit application
+Flask API
+FastAPI service
+setup.py
+
+Contains packaging instructions for Python projects.
+
+Used when distributing or installing a project as a package.
+
+Key takeaway
+
+For machine learning portfolio projects, app.py is usually required, while setup.py is optional and mainly used for packaging and distribution.
+
+environment.yml
+
+An environment.yml file defines a complete Conda environment.
+
+It can specify:
+
+Environment name
+Python version
+Dependencies
+Conda channels
+Example
+name: churn-env
+dependencies:
+  - python=3.12
+  - pandas
+  - scikit-learn
+
+Conda Environment Management
+
+Created an environment.yml file to define the project environment.
+
+Included:
+
+Python version
+Core data science libraries
+Machine learning dependencies
+Deployment dependencies
+Key takeaway
+
+Using environment.yml improves project reproducibility and allows other developers to recreate the exact environment with a single command.
+
+
+Saving Feature Metadata
+
+Saved the list of training feature names (model_columns.pkl) alongside the model and scaler.
+
+Key takeaway: Machine learning models expect the exact same feature structure during inference as during training. Saving feature metadata ensures consistent preprocessing and prevents deployment errors.
